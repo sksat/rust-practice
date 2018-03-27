@@ -1,6 +1,7 @@
 extern crate rand; // randを使う
 
 use std::io;
+use std::cmp::Ordering;
 use rand::Rng; // gen_rangeメソッドが動作するためにトレイトがスコープにある必要がある
 
 fn main() { // 関数宣言．引数の型を書いていないので空のタプルとして扱われる
@@ -17,5 +18,14 @@ fn main() { // 関数宣言．引数の型を書いていないので空のタ�
     io::stdin().read_line(&mut guess) // use std::ioしていないとstd::io::stdinと書くことになる．参照もデフォルトでimutableなので&mutとする．
         .expect("Failed to read line"); // read_lineが変えるio::Resultのexpectメソッド．
 
+    let guess: u32 = guess.trim().parse() // 新しくu32なguessを定義(シャドーイングを使い名前を再利用)
+        .expect("Please type a number!");
+
     println!("You guessed: {}", guess); // {}はプレースホルダ
+
+    match guess.cmp(&secret_number){ // cmpで比較．これはOrderingを返す
+        Ordering::Less      => println!("Too small!"),  // match文を使ってOrderingのどれであるかを判断
+        Ordering::Greater   => println!("Too big!"),    // Orderingはenum
+        Ordering::Equal     => println!("You win!"),
+    }
 }
